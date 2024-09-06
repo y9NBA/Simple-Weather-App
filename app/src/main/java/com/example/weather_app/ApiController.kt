@@ -4,7 +4,7 @@ import com.example.secret.ApiKey
 
 class ApiController(private var location: String) {
 
-    var apiKey = ApiKey().getWeatherApi()
+    val apiKey = ApiKey().getWeatherApi()
 
     fun getWeatherInfo(location: String) {
 
