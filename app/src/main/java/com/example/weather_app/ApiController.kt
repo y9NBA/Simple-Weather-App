@@ -1,5 +1,12 @@
 package com.example.weather_app
 
-class Controller {
-    
+import com.example.secret.ApiKey
+
+class ApiController(private var location: String) {
+
+    var apiKey = ApiKey().getWeatherApi()
+
+    fun getWeatherInfo(location: String) {
+
+    }
 }
