@@ -1,4 +1,4 @@
-package com.example.weather_app.services
+package com.example.weather_app.repositories
 
 import com.example.weather_app.models.Weather
 import retrofit2.Call
@@ -10,5 +10,5 @@ interface WeatherService {
     fun getWeatherInfo(
         @Query("q") location: String,
         @Query("appid") apiKey: String
-    ): Call<Weather>
+    ): Call<Weather?>?
 }

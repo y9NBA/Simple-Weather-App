@@ -1,6 +1,5 @@
-package com.example.weather_app.config
+package com.example.weather_app.repositories
 
-import com.example.weather_app.services.WeatherService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
