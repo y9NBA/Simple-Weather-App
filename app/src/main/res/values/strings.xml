@@ -2,4 +2,6 @@
     <string name="app_name">Weather-App</string>
     <string name="input_current_city">Введите свой город</string>
     <string name="look_temp">Узнать температуру</string>
+    <string name="temperature" />
+    <string name="icon_weather">Иконка погоды</string>
 </resources>
