@@ -1,6 +1,7 @@
 package com.example.weather_app
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.weather_app.controllers.WeatherController
@@ -20,10 +21,19 @@ class MainActivity : AppCompatActivity() {
 
         with(binding) {
             btnEnter.setOnClickListener {
-                weatherController.getWeather(enterLocation.text.toString(), context = this@MainActivity)
 
-                weatherController.weather.observe(this@MainActivity) {
-                    weatherLocation.text = it.current.temperature_2m.toString()
+                val location = enterLocation.text.toString()
+
+                if (location.isEmpty()) {
+                    Toast.makeText(this@MainActivity, "Введите локацию\nПоле ввода пустое", Toast.LENGTH_SHORT).show()
+                } else {
+
+                    weatherController.getWeather(location, context = this@MainActivity)
+
+                    weatherController.weather.observe(this@MainActivity) {
+                        cityText.text = it.cityName
+                        weatherLocation.text = "${it.current.temperature_2m} ${it.current_units.temperature_2m}"
+                    }
                 }
             }
         }
