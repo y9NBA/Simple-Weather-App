@@ -7,6 +7,7 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.weather_app.controllers.WeatherController
@@ -24,6 +25,9 @@ class LocationActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         with(binding) {
+
+
+
 
             btnEnter.setOnClickListener {
 
@@ -45,11 +49,6 @@ class LocationActivity : AppCompatActivity() {
                             Log.e("ValidLocation", "True and going update currCity")
 
                             putString(getString(R.string.currCity), location)
-
-                            putStringSet(
-                                getString(R.string.listCity),
-                                getString(R.string.listCity).split(" ").toSet().plus(location)
-                            )
 
                             commit()
                         }
