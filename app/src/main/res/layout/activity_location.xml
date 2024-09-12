@@ -11,18 +11,44 @@
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
         android:text="@string/weather"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
+    <EditText
+        android:id="@+id/enterLocation"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="330dp"
+        android:ems="10"
+        android:inputType="textPostalAddress"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:hint="@string/inputCurrentLocation" />
+
+    <Button
+        android:id="@+id/btnEnter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ВЫБОР ЛОКАЦИИ"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/look_temp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterLocation"
+        android:layout_marginTop="25dp"/>
+
+    <ListView
+        android:id="@+id/listCities"
+        android:layout_width="200dp"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnEnter" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

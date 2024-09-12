@@ -1,7 +1,9 @@
 package com.example.weather_app
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,33 +14,42 @@ class MainActivity : AppCompatActivity() {
 
     private val weatherController = WeatherController()
 
-    var binding = ActivityMainBinding.inflate(layoutInflater)
+    private lateinit var binding : ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         with(binding) {
-            btnEnter.setOnClickListener {
 
-                val location = enterLocation.text.toString()
+            val sharedPref = this@MainActivity.getSharedPreferences(getString(R.string.currCity), MODE_PRIVATE)
 
-                if (location.isEmpty()) {
-                    Toast.makeText(this@MainActivity, "Введите локацию\nПоле ввода пустое", Toast.LENGTH_SHORT).show()
-                } else {
+            Log.e("CreateMain", "currCity: ${sharedPref.getString(getString(R.string.currCity), "Not city")}; saveCity: ${getString(R.string.saveCity)}")
 
-                    weatherController.getWeather(location, context=this@MainActivity)
-
-                    weatherController.weather.observe(this@MainActivity) {
-                        cityText.text = it.cityName
-                        weatherLocation.text = "${it.current.temperature_2m} ${it.current_units.temperature_2m}"
-                    }
-                }
+            sharedPref.getString(
+                getString(R.string.currCity),
+                getString(R.string.saveCity)
+            )?.let {
+                updateWeatherUI(it)
             }
 
             btnNext.setOnClickListener {
                 val intent = Intent(this@MainActivity, LocationActivity::class.java)
                 startActivity(intent)
+            }
+        }
+    }
+
+    private fun updateWeatherUI(location: String) {
+        with(binding) {
+            weatherController.getWeather(location, context = this@MainActivity)
+
+            weatherController.weather.observe(this@MainActivity) {
+                cityText.text = it.cityName
+                weatherLocation.text =
+                    "${it.current.temperature_2m} ${it.current_units.temperature_2m}"
             }
         }
     }

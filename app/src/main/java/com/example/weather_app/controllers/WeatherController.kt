@@ -46,7 +46,7 @@ class WeatherController {
 
             override fun onFailure(call: Call<Weather?>, t: Throwable) {
                 Log.e("ОШИБЬКА", t.message.toString())
-                Toast.makeText(context, "Не удалось получить данные сервера\nТакая локация не найдена", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Не удалось получить данные сервера", Toast.LENGTH_LONG).show()
             }
         })
     }
