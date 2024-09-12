@@ -4,4 +4,5 @@
     <string name="look_temp">Узнать температуру</string>
     <string name="temperature" />
     <string name="icon_weather">Иконка погоды</string>
+    <string name="weather">Погода</string>
 </resources>
