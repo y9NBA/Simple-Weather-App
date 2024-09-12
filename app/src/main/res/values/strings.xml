@@ -4,4 +4,9 @@
     <string name="look_temp">Узнать температуру</string>
     <string name="temperature" />
     <string name="icon_weather">Иконка погоды</string>
+    <string name="weather">Погода</string>
+    <string name="inputCurrentLocation">Введите вашу локацию</string>
+    <string name="currCity"/>
+    <string name="saveCity">Кострома</string>
+    <string name="listCity"/>
 </resources>

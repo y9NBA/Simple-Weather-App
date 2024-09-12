@@ -15,6 +15,7 @@ import retrofit2.Response
 class WeatherController {
     private val _weather = MutableLiveData<Weather>()
     val weather: LiveData<Weather> = _weather
+
     fun getWeather(location: String,
                    current: String = "temperature_2m",
                    hourly: String = "temperature_2m,relative_humidity_2m,weather_code",
@@ -22,34 +23,48 @@ class WeatherController {
                    context: Context) {
 
         val geolocation = getLocation(context, location)
+        val cityName = geolocation.third
         val client = ApiConfig.getApiService().getWeatherInfo(geolocation.first, geolocation.second, current, hourly, daily)
+
+        Log.e("LocationInfo", "Lan: ${geolocation.first}; Lon: ${geolocation.second}")
 
         client?.enqueue(object : Callback<Weather?> {
             override fun onResponse(call: Call<Weather?>, response: Response<Weather?>) {
                 if (response.isSuccessful) {
                     Log.wtf("Response", "Response is successful")
                     response.body()?.let {
+                        it.cityName = cityName.first!!
+                        it.fullCityName = cityName.second!!
                         _weather.value = it
                     }
                 } else {
                     Log.e("Response", "Response is not OK")
+
+                    Toast.makeText(context, "Проверьте ваше подключение к интернету", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<Weather?>, t: Throwable) {
+                Log.e("ОШИБЬКА", t.message.toString())
                 Toast.makeText(context, "Не удалось получить данные сервера", Toast.LENGTH_LONG).show()
             }
         })
     }
 
-    fun getLocation(context: Context, location: String): Pair<Double, Double> {
+    private fun getLocation(context: Context, location: String): Triple<Double?, Double?, Pair<String?, String?>> {
         val geocoder = Geocoder(context)
-        val address = geocoder.getFromLocationName(location, 1)!!
+        val address = geocoder.getFromLocationName(location,1)
 
-        return if (address.size > 0) {
-            Pair(address[0].latitude, address[0].longitude)
+        return if (address!!.size > 0) {
+            Log.e("Location", "Found location is: ${address[0].featureName}")
+
+            Triple(address[0].latitude, address[0].longitude,
+                Pair(address[0].featureName,
+                    address[0].featureName + ", " + address[0].adminArea + ", " + address[0].locale.displayCountry
+                ))
         } else {
-            Pair(0.0, 0.0)
+            Log.e("Location", "Location is not found")
+            Triple(null, null, Pair(null, null))
         }
     }
 }
