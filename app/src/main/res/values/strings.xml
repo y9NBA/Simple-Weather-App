@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Weather-App</string>
-    <string name="input_current_city">Введите свой город</string>
     <string name="look_temp">Узнать температуру</string>
     <string name="temperature" />
     <string name="icon_weather">Иконка погоды</string>
     <string name="weather">Погода</string>
     <string name="inputCurrentLocation">Введите вашу локацию</string>
-    <string name="currCity"/>
+    <string name="currCity">Current City</string>
     <string name="saveCity">Кострома</string>
-    <string name="listCity"/>
+    <string name="listCity">List City</string>
+    <string name="prefData"/>
 </resources>

@@ -24,9 +24,22 @@ class MainActivity : AppCompatActivity() {
 
         with(binding) {
 
-            val sharedPref = this@MainActivity.getSharedPreferences(getString(R.string.currCity), MODE_PRIVATE)
+            val sharedPref = this@MainActivity.getSharedPreferences(getString(R.string.prefData), MODE_PRIVATE)
 
-            Log.e("CreateMain", "currCity: ${sharedPref.getString(getString(R.string.currCity), "Not city")}; saveCity: ${getString(R.string.saveCity)}")
+            if (sharedPref.getString(getString(R.string.saveCity), null) == null) {
+                with(sharedPref.edit()) {
+                    putString(
+                        getString(R.string.saveCity),
+                        getString(R.string.saveCity)
+                    )
+                    apply()
+                }
+            }
+
+            Log.e(
+                "CreateMain",
+                "currCity: ${sharedPref.getString(getString(R.string.currCity), null)}; saveCity: ${sharedPref.getString(getString(R.string.saveCity), null)}"
+            )
 
             sharedPref.getString(
                 getString(R.string.currCity),
@@ -41,6 +54,31 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val sharedPref = this@MainActivity.getSharedPreferences(getString(R.string.prefData), MODE_PRIVATE)
+
+        Log.e("AppDestroy", "start cleaning...")
+
+        with(sharedPref.edit()) {
+            putStringSet(
+                getString(R.string.listCity),
+                null
+            )
+
+            putString(
+                getString(R.string.currCity),
+                null
+            )
+
+            commit()
+        }
+
+        Log.e("AppDestroy", "currCity and listCity is clean")
+    }
+
 
     private fun updateWeatherUI(location: String) {
         with(binding) {

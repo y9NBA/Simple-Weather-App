@@ -26,8 +26,7 @@ class LocationActivity : AppCompatActivity() {
 
         with(binding) {
 
-
-
+            Log.e("CreateLocation", "currCity: ${getString(R.string.currCity)}; saveCity: ${getString(R.string.saveCity)}")
 
             btnEnter.setOnClickListener {
 
@@ -44,13 +43,52 @@ class LocationActivity : AppCompatActivity() {
                     ).show()
                 } else {
                     when(isValidLocation(this@LocationActivity, location)) {
-                        true -> with(this@LocationActivity.getSharedPreferences(getString(R.string.currCity), MODE_PRIVATE).edit()) {
+                        true -> {
+                            with(this@LocationActivity.getSharedPreferences(getString(R.string.prefData), MODE_PRIVATE)) {
 
-                            Log.e("ValidLocation", "True and going update currCity")
+                                Log.e("ValidLocation", "True and going update currCity")
 
-                            putString(getString(R.string.currCity), location)
+                                with(edit()) {
+                                    putString(getString(R.string.currCity), location)
+                                    apply()
+                                }
 
-                            commit()
+                                Log.e("CurrCity", "CurrCity is ${getString(getString(R.string.currCity), null)}")
+
+                                if (getString(getString(R.string.saveCity), null) == null) {
+                                    with(edit()) {
+                                        Log.e("SaveCity", "SaveCity is null, starting putString for saveCity")
+                                        putString(getString(R.string.saveCity), location)
+                                        apply()
+                                    }
+                                }
+
+                                Log.e("SaveCity", "SaveCity is ${getString(getString(R.string.saveCity), null)}")
+                            }
+
+                            with(this@LocationActivity.getSharedPreferences(getString(R.string.prefData), MODE_PRIVATE)) {
+
+                                val saveCity = getString(getString(R.string.saveCity), null)
+
+                                val listCity = getStringSet(getString(R.string.listCity), arrayOf(saveCity).toSet())!!
+                                    .plus(saveCity).plus(location)
+
+                                with(edit()){
+                                    putStringSet(
+                                        getString(R.string.listCity),
+                                        listCity
+                                    )
+
+                                    apply()
+                                }
+
+                                val setStr = getStringSet(getString(R.string.listCity), null)!!
+
+                                Log.e("StringSet", setStr.toString())
+                                Log.e("StringSet", setStr.size.toString())
+                            }
+
+                            Toast.makeText(this@LocationActivity, "Погода обновлена", Toast.LENGTH_SHORT).show()
                         }
 
                         else -> {
