@@ -41,10 +41,12 @@
         app:layout_constraintTop_toBottomOf="@+id/enterLocation"
         android:layout_marginTop="25dp"/>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listCities"
         android:layout_width="200dp"
         android:layout_height="300dp"
+        tools:listitem="@layout/list_cities"
+        tools:itemCount="5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

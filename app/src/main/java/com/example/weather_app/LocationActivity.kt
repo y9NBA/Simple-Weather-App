@@ -2,16 +2,21 @@ package com.example.weather_app
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
+import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
-import android.widget.ArrayAdapter
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.weather_app.controllers.WeatherController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.weather_app.adapters.RecyclerViewAdapter
 import com.example.weather_app.databinding.ActivityLocationBinding
+import com.example.weather_app.models.CityViewModel
 
 
 class LocationActivity : AppCompatActivity() {
@@ -26,12 +31,26 @@ class LocationActivity : AppCompatActivity() {
 
         with(binding) {
 
+            val sharedPref = this@LocationActivity.getSharedPreferences(getString(R.string.prefData), MODE_PRIVATE)
 
+            updateListView(
+                sharedPref.getStringSet(
+                    getString(R.string.listCity),
+                    arrayOf(sharedPref.getString(
+                        getString(R.string.saveCity),
+                        getString(R.string.saveCity)
+                    )).toSet()
+                )!!.toSet()
+            )
 
+            Log.e(
+                "CreateLocation",
+                "currCity: ${sharedPref.getString(getString(R.string.currCity), null)}; saveCity: ${sharedPref.getString(getString(R.string.saveCity), null)}"
+            )
 
             btnEnter.setOnClickListener {
 
-                val location = enterLocation.text.toString()
+                var location = enterLocation.text.toString()
 
                 if (location.isEmpty()) {
 
@@ -42,15 +61,63 @@ class LocationActivity : AppCompatActivity() {
                         "Введите локацию\nПоле ввода пустое",
                         Toast.LENGTH_SHORT
                     ).show()
+
                 } else {
-                    when(isValidLocation(this@LocationActivity, location)) {
-                        true -> with(this@LocationActivity.getSharedPreferences(getString(R.string.currCity), MODE_PRIVATE).edit()) {
 
-                            Log.e("ValidLocation", "True and going update currCity")
+                    val resValidLoc = isValidLocation(this@LocationActivity, location)
+                    val isValidLoc = resValidLoc.first
 
-                            putString(getString(R.string.currCity), location)
+                    when(isValidLoc) {
+                         true -> {
+                            with(this@LocationActivity.getSharedPreferences(getString(R.string.prefData), MODE_PRIVATE)) {
 
-                            commit()
+                                location = resValidLoc.second!!
+
+                                Log.e("ValidLocation", "True and going update currCity")
+
+                                with(edit()) {
+                                    putString(getString(R.string.currCity), location)
+                                    apply()
+                                }
+
+                                Log.e("CurrCity", "CurrCity is ${getString(getString(R.string.currCity), null)}")
+
+                                if (getString(getString(R.string.saveCity), null) == null) {
+                                    with(edit()) {
+                                        Log.e("SaveCity", "SaveCity is null, starting putString for saveCity")
+                                        putString(getString(R.string.saveCity), location)
+                                        apply()
+                                    }
+                                }
+
+                                Log.e("SaveCity", "SaveCity is ${getString(getString(R.string.saveCity), null)}")
+                            }
+
+                            with(this@LocationActivity.getSharedPreferences(getString(R.string.prefData), MODE_PRIVATE)) {
+
+                                val saveCity = getString(getString(R.string.saveCity), null)
+
+                                val listCity = getStringSet(getString(R.string.listCity), arrayOf(saveCity).toSet())!!
+                                    .plus(saveCity).plus(location)
+
+                                with(edit()){
+                                    putStringSet(
+                                        getString(R.string.listCity),
+                                        listCity
+                                    )
+
+                                    apply()
+                                }
+
+                                val setStr = getStringSet(getString(R.string.listCity), null)!!
+
+                                Log.e("StringSet", setStr.toString())
+                                Log.e("StringSet", setStr.size.toString())
+
+                                updateListView(setStr)
+                            }
+
+                            Toast.makeText(this@LocationActivity, "Погода обновлена", Toast.LENGTH_SHORT).show()
                         }
 
                         else -> {
@@ -73,9 +140,32 @@ class LocationActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun updateListView(setString: Set<String>) {
+        val listCity = ArrayList<CityViewModel>()
+
+        binding = ActivityLocationBinding.inflate(layoutInflater)
+
+        with(binding) {
+            listCities.layoutManager = LinearLayoutManager(this@LocationActivity)
+
+            for (str in setString) {
+                listCity.add(CityViewModel(str))
+
+                Log.e("ListCity", str)
+            }
+
+            listCities.adapter = RecyclerViewAdapter(this@LocationActivity, listCity)
+        }
+
+        Log.e("UpdateListView", "Updating is done, ${binding.listCities.adapter!!.itemCount} items was add")
+        Log.e("АДАПТЕР", binding.listCities.adapter.toString())
+    }
 }
 
-fun isValidLocation(context: Context, location: String): Boolean {
+fun isValidLocation(context: Context, location: String): Pair<Boolean, String?> {
     val geocoder = Geocoder(context)
-    return geocoder.getFromLocationName(location, 1)!!.size > 0
+    val address = geocoder.getFromLocationName(location, 1)
+
+    return if (address!!.size > 0) Pair(true, address[0].featureName) else Pair(false, null)
 }
