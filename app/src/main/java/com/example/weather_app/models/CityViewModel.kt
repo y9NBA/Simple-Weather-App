@@ -1,3 +1,3 @@
 package com.example.weather_app.models
 
-data class CitiyViewModel()
+data class CityViewModel(var text: String)
